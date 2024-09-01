@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {getMonthMatrix} from "../../util.ts";
+import {employee_colorLabel_by_id, getMonthMatrix} from "../../util.ts";
 import GlobalContext from "../../context/GlobalContext.ts";
 import dayjs, { Dayjs } from 'dayjs';
 import Day from './Day.tsx';
@@ -35,40 +35,51 @@ function Week(props) {
                         <div></div>
                 {selectedWeekMatrix && selectedWeekMatrix.length>0 && (
                   <div className="grid grid-cols-7 grid-rows-1 text-center">
-                      <div className="p-2 text-gray-500">SUN ({(selectedWeekMatrix[0] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">MON ({(selectedWeekMatrix[1] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">TUE ({(selectedWeekMatrix[2] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">WED ({(selectedWeekMatrix[3] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">THU ({(selectedWeekMatrix[4] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">FRI ({(selectedWeekMatrix[5] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
-                      <div className="p-2 text-gray-500">SAT ({(selectedWeekMatrix[6] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">SUN ({(selectedWeekMatrix[0] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">MON ({(selectedWeekMatrix[1] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">TUE ({(selectedWeekMatrix[2] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">WED ({(selectedWeekMatrix[3] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">THU ({(selectedWeekMatrix[4] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">FRI ({(selectedWeekMatrix[5] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
+                      <div className="p-2 text-gray-500 border-x">SAT ({(selectedWeekMatrix[6] as Dayjs).format("DD-MM-YY").slice(0,2)})</div>
                 </div>
 
                 )}
                 </div>
         
-
+            {/* Employees  */}
                  <div className="grid grid-cols-1/5 flex-1 min-w-[720px]">
-                        <div className={`text-center`}>
+                        <div className={`grid grid-cols-1 h-[95vh]`}>
                               {/* Employees row  */}
                         {
-                   employees.map((em,i)=>( <div className={`flex items-center justify-center border-b bg-${em.label}-500 text-gray-700 h-16`} key={i}>{em.firstName} {em.lastName}</div>))     
+                   employees.map((em,i)=>( <div className={`flex items-center justify-around border-b bg-${employee_colorLabel_by_id[em.id%5]}-500 text-gray-700 flex-1`} key={i}>
+                           
+                        <img
+                            className='w-10 h-10 rounded-full'
+                            src="https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/09916c28-9bcc-47c4-bc9b-400bb57f3b99.png" alt="" />
+                        
+                        <div className='flex flex-col items-center'>
+                        <span className='text-gray-100'>{em.firstName} {em.lastName}</span>
+                        <span className='text-gray-500'>{em.job}</span>
+                        </div>
+                       
+                        </div>))     
                  } 
                         </div>  
 
                   {/* actual employee schedule  */}
-                        <div  className={`grid grid-cols-7 grid-rows-${employees.length}`}>
+                        <div  className={`grid grid-cols-7 grid-rows-${employees.length} h-[95vh]`}>
 
                               {/* 7*employees.length cells to be generated dynamically */}
                               {selectedWeekMatrix && sample.map((s,i)=>{
-                                return < >
-                                      <Day key={i} index={i} employee={employees[Math.floor(i/7)]} day={selectedWeekMatrix[i%7]} 
-                                      events={savedEvents.filter(e=> { 
-                                          console.log("filter true", dayjs(e.day).format("DD-MM-YY")+"/" +selectedWeekMatrix[i%7]?.format("DD-MM-YY"));
+                                return <>
+                                      <Day key={i} index={i} employee={employees[Math.floor(i / 7)]} day={selectedWeekMatrix[i % 7]}
+                                      events={savedEvents.filter(e => {
 
-                                          return dayjs(e.day).isSame(selectedWeekMatrix[i%7], 'year') && dayjs(e.day).isSame(selectedWeekMatrix[i%7], 'day')
-                                          // employee id 일치 여부
-                                          && e.employee.id === employees[Math.floor(i/7)].id }) }/>
+                                            return dayjs(e.day).isSame(selectedWeekMatrix[i % 7], 'year') && dayjs(e.day).isSame(selectedWeekMatrix[i % 7], 'day')
+                                                  // employee id 일치 여부
+                                                  && e.employee.id === employees[Math.floor(i / 7)].id;
+                                      })}/>
                                 </>
                               })}
                              

@@ -14,6 +14,7 @@ import GlobalContext from "../context/GlobalContext.ts";
 import {useForm} from "react-hook-form";
 import {Dayjs} from "dayjs";
 import styled from "@emotion/styled";
+import { employee_colorLabel_by_id } from '../util.ts';
 
 const EventModalStyles = styled.div`
 
@@ -158,13 +159,13 @@ function EventModal() {
                             <WorkHistory className="text-gray-400" />
                             <input
                                 className="border-0 text-gray-600 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
-                                type="time" id="startTime" {...register("startTime", { required: true })} />
+                                type="time" step="900" id="startTime" {...register("startTime", { required: true })} />
 
                             {/* row6: 종료 시간 */}
                             <Done className="text-gray-400" />
                             <input
                                 className="border-0 text-gray-600 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
-                                type="time" id="endTime" {...register("endTime", { required: true })} />
+                                type="time" step="900" id="endTime" {...register("endTime", { required: true })} />
 
 
 
@@ -180,7 +181,7 @@ function EventModal() {
                                         className="px-2 pt-2 border rounded cursor-pointer flex items-center"
                                         onClick={toggleDropdown}
                                     >
-                                        <span className={`inline-block w-4 h-4 mr-3 bg-${selectedEmployee.label}-500`}></span>
+                                        <span className={`inline-block w-4 h-4 mr-3 bg-${employee_colorLabel_by_id[selectedEmployee.id]}-500`}></span>
                                         {`${selectedEmployee.firstName} ${selectedEmployee.lastName}` }
                                     </p>
 
@@ -192,7 +193,7 @@ function EventModal() {
                                                     className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
                                                     onClick={() => handleSelect(em)}
                                                 >
-                                                    <span className={`inline-block w-4 h-4 mr-2 bg-${em.label}-500`}></span>
+                                                    <span className={`inline-block w-4 h-4 mr-2 bg-${employee_colorLabel_by_id[em.id%5]}-500`}></span>
                                                     {`${em.firstName} ${em.lastName}`}
                                                 </div>
                                             ))}

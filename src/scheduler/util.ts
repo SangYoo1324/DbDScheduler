@@ -25,27 +25,17 @@ export const colorClasses = {
 
 
 export const sampleEmployees = [
-    {id: 1,firstName:"sam", lastName:"yi", label: "cyan",checked: true},
-    {id: 2,firstName: "joe", lastName:"yi", label: "red", checked: true},
-    {id: 3,firstName: "mark", lastName:"yi", label: "green", checked: true},
-    {id: 4,firstName: "nate", lastName:"yi", label: "slate", checked: true},
-    {id: 5,firstName: "jim", lastName:"yi", label: "purple", checked: true},
+    {id: 1,firstName:"sam", lastName:"yin", label: "cyan",checked: true, job: "Product Manager" ,profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 2,firstName: "joe", lastName:"yid", label: "red", checked: true, job: "Product Manager" ,profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 3,firstName: "mark", lastName:"yia", label: "green", checked: true, job: "Software Engineer" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 4,firstName: "nate", lastName:"yif", label: "slate", checked: true, job: "Software Engineer" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 5,firstName: "jane", lastName:"yic", label: "purple", checked: true, job: "Software Engineer 2" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
 
-    {id: 6,firstName: "will", lastName:"yi", label: "blue", checked: true},
-    {id: 7,firstName: "kim", lastName:"yi", label: "red", checked: true},
-    {id: 8,firstName: "park", lastName:"yi", label: "green", checked: true},
-    {id: 9,firstName: "moon", lastName:"yi", label: "slate", checked: true},
-    {id: 10,firstName: "chang", lastName:"yi", label: "purple", checked: true},
-
-    {id: 11,firstName: "hwang", lastName:"yi", label: "blue", checked: true},
-    {id: 12,firstName: "baek", lastName:"yi", label: "red", checked: true},
-    {id: 13,firstName: "yoo", lastName:"yi", label: "green", checked: true},
-    {id: 14,firstName: "seo", lastName:"yi", label: "slate", checked: true},
-    {id: 15,firstName: "soon", lastName:"yi", label: "purple", checked: true},
-
-    {id: 16,firstName: "kang", lastName:"yi", label: "blue", checked: true},
-    {id: 17,firstName: "lee", lastName:"yi", label: "red", checked: true},
-    {id: 18,firstName: "she", lastName:"yi", label: "green", checked: true},
+    {id: 6,firstName: "will", lastName:"yiv", label: "blue", checked: true, job: "System Admin" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 7,firstName: "kim", lastName:"yic", label: "red", checked: true, job: "Software Engineer 2" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 8,firstName: "park", lastName:"yis", label: "green", checked: true, job: "IT Specialist" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 9,firstName: "moon", lastName:"yib", label: "slate", checked: true, job: "Security Analyst" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
+    {id: 10,firstName: "chang", lastName:"yee", label: "purple", checked: true, job: "Support Engineer" , profile_pic:"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/default_selfie.png"},
 
 ];
 
@@ -63,3 +53,6 @@ return weekIndex;
 }
 
 export const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+
+export const employee_colorLabel_by_id = ["blue", 'red','green', 'orange','gray' ]

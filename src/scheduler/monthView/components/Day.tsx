@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import dayjs, {Dayjs} from "dayjs";
 import GlobalContext from "../../context/GlobalContext.ts";
-import {colorClasses} from "../../util.ts";
+import {colorClasses, employee_colorLabel_by_id} from "../../util.ts";
 import ExpandModal from "../../commonComponents/ExpandModal.tsx";
 import {Badge, IconButton} from "@mui/material";
 import {ArrowDownward, Mail, MoreHoriz, MoreVert} from "@mui/icons-material";
@@ -9,7 +9,7 @@ import {ArrowDownward, Mail, MoreHoriz, MoreVert} from "@mui/icons-material";
 
 // @ts-ignore
 function Day({day, rowIdx, employeesFilterInfo}) {
-
+    
     const {monthIndex,
         setMonthIndex,
         setSmallCalendarMonth,
@@ -65,19 +65,24 @@ function Day({day, rowIdx, employeesFilterInfo}) {
             {/*Events inside day*/}
         <div className="flex-1 cursor-pointer" >
             {dayEvents.map((e, idx)=>{
-                if(idx <=3){
+                // 2개 이상이면 더보기 버튼으로 대체
+                if(idx <2){
                     return (
                         <div
                             onClick={()=> {
                                 setSelectedEmployee(e.employee);
                                 setSelectedEvent(e);
                             }}
-                            key={idx} className={`bg-${e.employee.label}-500 p-1 sm:mr-3 text-gray-600 text-sm rounded mb-1 truncate ${
+                            key={idx} className={`bg-${employee_colorLabel_by_id[e.employee.id%5]}-500 p-1 sm:mr-3 text-gray-600 text-sm rounded mb-1 truncate flex justify-between items-center ${
                                 // event의 employee가 checked면 보여주고 아니면 hidden
                                 employeesFilterInfo.find(em=>{
                                 
-                                    return em.id === e.employee.id}).checked ? '': 'hidden'}`}>
-                            {e.title}
+                                    return em.id === e.employee.id}).checked ?   '': 'hidden'}`}>
+                            <span className='truncate'>{`${e.employee.lastName}, ${e.employee.firstName}`}</span>
+                            <span><img
+                            className='w-6 h-6 rounded-full'
+                            src="https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/09916c28-9bcc-47c4-bc9b-400bb57f3b99.png" alt="" /></span>
+                        
                         </div>
                     )
                 }else{
@@ -85,10 +90,12 @@ function Day({day, rowIdx, employeesFilterInfo}) {
                 }
 
             })}
-            { dayEvents.length>3 && <div onClick={handleOpenExpandModal} className="bg-gray-200 p-1 sm:mr-3 text-gray-600 text-sm rounded
+
+            {/* handleExpandModal  */}
+            { dayEvents.length>2 && <div onClick={handleOpenExpandModal} className="bg-gray-200 sm:mr-3 text-gray-600 text-sm rounded-md
              mb-1 text-center font-bold">
                 <IconButton color="primary">
-                    <Badge badgeContent={dayEvents.length-4} color="error" className="z-0" >
+                    <Badge badgeContent={dayEvents.length-2} color="error" className="z-0" >
                         <MoreHoriz/>
                     </Badge>
 

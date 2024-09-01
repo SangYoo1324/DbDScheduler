@@ -10,7 +10,7 @@ function GoogleCalendarWeek(props) {
     const {showEventModal} = useContext(GlobalContext);
     return (
         <React.Fragment>
-            {showEventModal ?? <EventModal/>}
+            {showEventModal && <EventModal/>}
             <div className="h-screen w-full flex flex-col">
             <WeekCalendarHeader/>
             <div className="flex">

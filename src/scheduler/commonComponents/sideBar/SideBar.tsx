@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import CreateEventButton from "../../monthView/components/CreateEventButton.tsx";
+import CreateEventButton from "./CreateEventButton.tsx";
 import SmallCalendar from "./SmallCalendar.tsx";
 import EmployeePagination from "../EmployeePagination.tsx";
 import GlobalContext from "../../context/GlobalContext.ts";

@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import {CustomEvent, Employee} from "../../interfaces.ts";
 import TimeFrame from "./TimeFrame.tsx";
 import { dividerClasses } from '@mui/material';
+import { employee_colorLabel_by_id } from '../../util.ts';
 
 
 interface TimeFrameObject {
@@ -18,6 +19,7 @@ interface TimeFrameObject {
 interface ObjectClassifiedByEmployees {
     jim: { // jim, sam, etc...
         label: string,
+        employee: Employee
         list: TimeFrameObject,
     },
     sam: { // jim, sam, etc...
@@ -75,7 +77,9 @@ function Day(props) {
 
             // initialTableSet로 각 label별 배열 초기화 {id: {label:'cyan', fullName: 'sam yi', list: [0]}}
             const initialTableSet = displayedEmployees.reduce((acc, employee) => {
-                acc[employee.id] = {label: employee.label,fullName:`${employee.firstName} ${employee.lastName}`,list:[]};
+                acc[employee.id] = {label: employee.label,
+                    employee: employee
+                    ,fullName:`${employee.firstName} ${employee.lastName}`,list:[]};
                 return acc;
             }, {}); // 빈 객체를 초기값으로 설정
             console.log("initialTableSet:", initialTableSet);
@@ -149,18 +153,27 @@ function Day(props) {
 
     return (  
          // flex-1 is required to take all the space to the end of the x-axis
-        <div className=" overflow-x-auto flex-1">
-             <div className="flex-1 border min-w-[720px]">
+        <div className="flex-1 overflow-x-auto">
+             <div className="flex-1 min-w-[720px] max-h-[100vh]">
         
         {/* 맨 위 employees */}
         {
             objectClassifiedByemployees && (
 
-                <div className="grid grid-cols-1/10 box-border">
+                <div className="grid grid-cols-1/10 box-border border-r-[17px] h-[10vh]">
                     <div className="text-center border border-l-transparent">Time</div>
-                    <div className={`grid grid-cols-${Object.keys(objectClassifiedByemployees).length} box-border text-center `}>
+                    <div className={`grid grid-cols-${Object.keys(objectClassifiedByemployees).length} box-border text-center`}>
                         {Object.keys(objectClassifiedByemployees).map((id,i)=>{
-                            return ( <div key={i} className={`bg-${objectClassifiedByemployees[id].label}-500 text-gray-100 border-b`}>{objectClassifiedByemployees[id].fullName}</div>)
+                            return ( 
+                            <div key={i} className={`bg-${employee_colorLabel_by_id[objectClassifiedByemployees[id].employee.id%5]}-500 text-gray-100 border-b flex justify-center py-3 items-center`}>
+                            <span ><img className='w-10 h-10 rounded-full mr-3' src={"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/09916c28-9bcc-47c4-bc9b-400bb57f3b99.png"} alt="" /></span>
+                                <div className='flex flex-col'>
+                                <span>{objectClassifiedByemployees[id].fullName}</span>
+                                <span className='text-gray-300'>{objectClassifiedByemployees[id].employee.job}</span>
+                                </div>
+                            </div>
+                            
+                        )
                         })
                         }
                     </div>
@@ -171,16 +184,17 @@ function Day(props) {
 
 
 
-        <div className="h-screen grid grid-cols-1/10 box-border">
+        <div className="h-[90vh] grid grid-cols-1/10 box-border" style={{overflowY: 'scroll'}}>
 
 {/* timeFrame(시간)  */}
-<div className="h-screen grid grid-cols-1 grid-rows-96 box-border sm:text-xl text-xs">
+<div className="h-[90vh] grid grid-cols-1 grid-rows-96 box-border sm:text-xl text-xs">
     {
         timeSlots.map((u,i)=>(
-            <div key={i} className={`
-            flex items-center justify-center border border-l-transparent border-b-transparent ${i%4!==0 ? 'border-transparent': ''} row-span-1 box-border text-center min-h-[26px]`}>{i%4===0? u: ""}</div>
+            <div key={i} className={`border border-l-transparent border-b-transparent ${i%4!==0 ? 'border-y-transparent': ''}
+            flex items-center justify-center row-span-1 box-border text-center min-h-[26px]`}>{i%4===0? u: ""}</div>
         ))
     }
+
 
 
 {/* Actual Schedule */}
@@ -192,7 +206,7 @@ function Day(props) {
             return (<div key={j} className={`grid grid-cols-1 grid-rows-96 box-border`}>
                 {
                     objectClassifiedByemployees[id].list.map((h, i)=>{
-                        const colorName = h.event? `bg-${h.event.employee.label}-500`: '';
+                        const colorName = h.event? `bg-${employee_colorLabel_by_id[h.event.employee.id]}-500`: '';
                         return (<TimeFrame  key={i} employee={h.employee} event={h.event} idx={i} colorName={colorName} initEvent={h.initEvent}/>)
                     })
                 }

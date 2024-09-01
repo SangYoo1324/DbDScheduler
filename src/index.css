@@ -4,5 +4,17 @@
 
 body{
   margin: 0;
-
+  
 }
+
+override-p-0{
+  padding: 0;
+}
+
+
+@media (max-width: 720px) {
+  body{
+    font-size: 0.8rem;
+  }
+}
+

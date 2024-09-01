@@ -11,8 +11,8 @@ function TimeFrame({colorName, idx, event, initEvent, employee}) {
             console.log("startTime"+starTime);
             setSelectedTimeFrame(starTime);
         }
-        console.log("TimeFrame Employeee:", employee)
         setSelectedEmployee(event? event.employee : employee);
+        console.log("event:::",event)
         setSelectedEvent(event);
         setShowEventModal(true);
         //event가 null일때만 timeFrame 정해서 modal에 시작time 설정
@@ -25,7 +25,8 @@ function TimeFrame({colorName, idx, event, initEvent, employee}) {
     return (
         <div>
 
-        <div onClick={toggleTimeFrame}  className={`box-border idx-${idx} ${event ? 'border': 'border'} row-span-1 ${colorName} ${event ? "":"hover:bg-gray-100"} box-border min-h-[26px] text-center text-gray-100 cursor-pointer`}>{event && initEvent && event.title}
+        <div onClick={toggleTimeFrame}  className={`${event? '': 'border'} box-border idx-${idx}  row-span-1 ${colorName} ${event ? "":"hover:bg-gray-100"} box-border min-h-[26px] text-center text-gray-100 cursor-pointer`}>
+            {event && initEvent && `${event.startTime} ~ ${event.endTime}`}
         </div>
 
         </div>
