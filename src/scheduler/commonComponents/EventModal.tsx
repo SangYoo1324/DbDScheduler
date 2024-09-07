@@ -14,7 +14,9 @@ import GlobalContext from "../context/GlobalContext.ts";
 import {useForm} from "react-hook-form";
 import {Dayjs} from "dayjs";
 import styled from "@emotion/styled";
-import { employee_colorLabel_by_id } from '../util.ts';
+import { employee_colorLabel_by_id, indexToTime } from '../util.ts';
+import { drag } from '@syncfusion/ej2-react-schedule/index';
+import { Employee } from '../interfaces.ts';
 
 const EventModalStyles = styled.div`
 
@@ -33,29 +35,33 @@ function EventModal() {
         selectedEmployee,
         setSelectedEmployee,
         setSelectedTimeFrame,
-        selectedTimeFrame
+        selectedTimeFrame,
+        setSelectedTimeFrames,
+        selectedTimeFrames,
+        setIsDragging,
     } = useContext(GlobalContext);
 
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         defaultValues: {
-            title: selectedEvent? selectedEvent!.title : '',
-            description: selectedEvent? selectedEvent!.description : '',
-            startTime: selectedEvent ? selectedEvent!.startTime: selectedTimeFrame,
-            endTime: selectedEvent ? selectedEvent!.endTime : '',
+            title: selectedEvent? selectedEvent!.title : 'regular-schedule',
+            description: selectedEvent? selectedEvent!.description : 'regular-shift',
+            startTime: selectedEvent ? selectedEvent!.startTime: selectedTimeFrame ? selectedTimeFrame : selectedTimeFrames? indexToTime( selectedTimeFrames[0], true) : '',
+            endTime: selectedEvent ? selectedEvent!.endTime : selectedTimeFrames ? indexToTime(selectedTimeFrames[selectedTimeFrames.length-1], false)  : '',
             employee: selectedEvent ? JSON.stringify(selectedEvent.employee): JSON.stringify(selectedEmployee)
         }
     });
 
-    // useEffect(()=>{
-    //     console.log("modal's selectedTimeFrame:", selectedTimeFrame);
-    //     setValue("employee", JSON.stringify(selectedEmployee));
-    // },[selectedTimeFrame, selectedEmployee]);
+    useEffect(()=>{
+        console.log("EventModal:selectedEvent", selectedEvent);
+    },[]);
 
 
 
     // Dynamically increase employees
     // const extendedemployees = Array.from({length: categories.length},(_,i)=>employees[i%employees.length]);
+
+
 
 
     // Toggle DropDown
@@ -95,7 +101,9 @@ function EventModal() {
 
         //close Modal
         setShowEventModal(false);
+        setIsDragging(false);
         employees? setSelectedEmployee(employees[0]) : '';
+        
     }
 
     return (
@@ -119,13 +127,14 @@ function EventModal() {
                                     </Delete>
                                 </button>
                             )}
-
+                            {/* Close Button */}
                             <button  onClick={()=>{
                                 setShowEventModal(false);
+                                setIsDragging(false);
                                 // Need to set selectedEvent null for the next modal open
                                 setSelectedEvent(null);
                                 setSelectedTimeFrame('');
-
+                                setSelectedTimeFrames([]);
                             }}>
                                 <Close className="text-gray-400">
 
@@ -181,20 +190,24 @@ function EventModal() {
                                         className="px-2 pt-2 border rounded cursor-pointer flex items-center"
                                         onClick={toggleDropdown}
                                     >
-                                        <span className={`inline-block w-4 h-4 mr-3 bg-${employee_colorLabel_by_id[selectedEmployee.id]}-500`}></span>
-                                        {`${selectedEmployee.firstName} ${selectedEmployee.lastName}` }
+                                        <span className={`inline-block w-4 h-4 mr-3 bg-${employee_colorLabel_by_id[selectedEmployee.id]}-100`}></span>
+                                        <span>{`${selectedEmployee.firstName} ${selectedEmployee.lastName}` }</span>
+                                        <img src={selectedEmployee.profile_pic} alt="" className='rounded-full h-4 w-4 ml-auto'/>
                                     </p>
 
                                     {isOpen && (
                                         <div className="absolute mt-2 w-full rounded-md bg-white shadow-lg z-10 overflow-scroll max-h-[20vh]">
-                                            {employees.map((em) => (
+                                            {employees.map((em:Employee) => (
                                                 <div
                                                     key={em.id}
                                                     className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
                                                     onClick={() => handleSelect(em)}
                                                 >
-                                                    <span className={`inline-block w-4 h-4 mr-2 bg-${employee_colorLabel_by_id[em.id%5]}-500`}></span>
-                                                    {`${em.firstName} ${em.lastName}`}
+                                                   
+                                                    <span className={`inline-block w-4 h-4 mr-2 bg-${employee_colorLabel_by_id[em.id%5]}-100`}></span>
+                                                    <span>{`${em.firstName} ${em.lastName}`}</span>
+                                                   
+                                                    <img src={em.profile_pic} alt="" className='rounded-full h-5 w-5 ml-auto'/>
                                                 </div>
                                             ))}
                                         </div>

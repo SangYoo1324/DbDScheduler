@@ -1,8 +1,10 @@
 import React from 'react';
 import dayjs, {Dayjs} from "dayjs";
-import {Employee, CustomEvent} from "../interfaces.ts";
+import {Employee} from "../interfaces.ts";
 import timeFrame from "../dayView/components/TimeFrame.tsx";
 import { set } from 'react-hook-form';
+import { payPeriod } from '../GlobalVar.ts';
+import { getPPMonthMatrix } from '../util.ts';
 
 
 
@@ -11,7 +13,7 @@ import { set } from 'react-hook-form';
 const GlobalContext = React.createContext({
     selectedView: "WEEK",
     setSelectedView: (view)=>{},
-    weekIndex: 0,
+    PPweekIndex: 0,
     setWeekIndex: (index:number)=>{},
     selectedWeekMatrix: [],
     setSelectedWeekMatrix: (matrix)=>{},
@@ -41,8 +43,25 @@ const GlobalContext = React.createContext({
     openExpandModal: false,
     setOpenExpandModal: (open)=>{},
     pageIndex: 0,
-    setPageIndex: (idx)=>{}
+    setPageIndex: (idx)=>{},
+    // dragEndTimeFrame: '',
+    // setDragEndTimeFrame: (timeFrame)=>{},
+    isDragging: false,
+    setIsDragging: (isDragging)=>{},  
+    selectedTimeFrames: [],
+    setSelectedTimeFrames: (timeFrames)=>{},
+    perPage:5,
+    setPerPage: (perPage)=>{},
+    selectedDays: [],
+    setSelectedDays: (days)=>{},
+    showComplexEventModal: false,
+    setShowComplexEventModal: (show)=>{},
 
+    ppMonthMatrix: [], 
+    setPPMonthMatrix: (matrix)=>{},
+
+    isSmallCalendarClicked: false,
+    setIsSmallCalendarClicked: (clicked)=>{},
 });
 
 

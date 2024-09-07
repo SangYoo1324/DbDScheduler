@@ -18,7 +18,7 @@ function Day({employee, events, index, day}) {
 
         const {setOpenExpandModal, setDaySelected, openExpandModal, daySelected, selectedEmployee,setSelectedEvent, setSelectedEmployee, setShowEventModal}= useContext(GlobalContext);
         useEffect(()=>{
-            console.log("events", events);
+
         },[])
 
 
@@ -30,16 +30,25 @@ function Day({employee, events, index, day}) {
             setOpenExpandModal(true);
         }
 
+        const handleEventToggle = (event)=>{
+            event.stopPropagation();
+            console.log("toggle");
+            setSelectedEmployee(employee);
+            setSelectedEvent(events[0]);
+            setShowEventModal(true);
+        }
+
 
     return (
         <div
-        onClick={()=>{
+        onClick={employee.id>0 ? ()=>{
             setDaySelected(day);
             setSelectedEmployee(employee);
-            setShowEventModal(true);
+            // only when employee is not dummy
+            employee.id>0 ? setShowEventModal(true) : alert("Please select a valid employee");
             console.log("clicked day");
-        }} 
-        className="text-center border border-gray-300 hover:cursor-pointer flex items-center justify-center relative h-full">
+        } : undefined} 
+        className={`text-center border border-gray-300 ${employee.id<0?  'cursor-not-allowed': 'cursor-pointer'} flex items-center justify-center relative h-full`}>
             {
                 employee && <div className='flex flex-col items-center justify-center absolute w-[100%]'>
                     {events.map((e, i)=>{
@@ -47,13 +56,7 @@ function Day({employee, events, index, day}) {
                             return ;
                         }else 
                         return <div
-                        onClick={(event)=> {
-                    
-                            setSelectedEmployee(e.employee);
-                            setSelectedEvent(e);
-                            setShowEventModal(true);
-                            console.log("clicked event", e);
-                        }}
+                        onClick={handleEventToggle}
                         key={i} className={`text-gray-100 bg-${employee_colorLabel_by_id[e.employee.id]}-500 rounded-sm overflow-hidden text-center w-[100%] mb-[1px] p-1
                         ${events.length>2 && i>0 ? 'hidden': ''}
                             `}>{`${e.startTime} - ${e.endTime}`}</div>

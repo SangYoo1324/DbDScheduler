@@ -2,11 +2,11 @@ import React, {useEffect, useReducer, useState} from 'react';
 import GlobalContext from "./GlobalContext.ts";
 import dayjs from "dayjs";
 import {getMonthMatrix, sampleEmployees} from "../util.ts";
-import {CustomEvent, Employee} from "../interfaces.ts";
+import { Employee} from "../interfaces.ts";
 
 const ContextWrapper = (props:any) =>{
     const [selectedView, setSelectedView] = useState();
-    const [weekIndex, setWeekIndex]= useState<number>();
+    const [PPweekIndex, setWeekIndex]= useState<number>();
     const [monthIndex, setMonthIndex] = useState(dayjs().month());
     const [monthMatrix, setMonthMatrix] = useState(getMonthMatrix(dayjs().month()));
     const [smallCalendarMonth, setSmallCalendarMonth] = useState(null);
@@ -20,8 +20,14 @@ const ContextWrapper = (props:any) =>{
     const [openExpandModal, setOpenExpandModal] = useState(false);
     const [pageIndex, setPageIndex] = useState(0);
     const [selectedWeekMatrix, setSelectedWeekMatrix] = useState([]);
-
-
+    const [selectedTimeFrames, setSelectedTimeFrames] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragEndTimeFrame, setDragEndTimeFrame] = useState(null);
+    const [perPage, setPerPage] = useState(5);
+    const [selectedDays, setSelectedDays] = useState([]);
+    const [showComplexEventModal, setShowComplexEventModal] = useState(false);
+    const [ppMonthMatrix, setPPMonthMatrix] = useState([]);
+    const [isSmallCalendarClicked, setIsSmallCalendarClicked] = useState(false);
     function initEvents(){
         const storageEvents = localStorage.getItem('savedEvents');
         return storageEvents ? JSON.parse(storageEvents) : [];
@@ -84,9 +90,8 @@ const ContextWrapper = (props:any) =>{
     return (
         <GlobalContext.Provider value={{
             selectedView,
-            setSelectedView,
-            
-            weekIndex,
+            setSelectedView,   
+            PPweekIndex,
             setWeekIndex,
             selectedWeekMatrix,
             setSelectedWeekMatrix,
@@ -115,7 +120,20 @@ const ContextWrapper = (props:any) =>{
             openExpandModal,
             setOpenExpandModal,
             pageIndex,
-            setPageIndex
+            setPageIndex,
+            // dragEndTimeFrame,
+            // setDragEndTimeFrame,
+            isDragging,
+            setIsDragging,
+            selectedTimeFrames,
+            setSelectedTimeFrames,
+            perPage,
+            setPerPage,
+            showComplexEventModal, setShowComplexEventModal,
+            ppMonthMatrix, setPPMonthMatrix,
+
+            isSmallCalendarClicked,
+            setIsSmallCalendarClicked,
         }}>
             {props.children}
         </GlobalContext.Provider>

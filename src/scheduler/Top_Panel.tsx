@@ -3,23 +3,30 @@ import GoogleCalendarMonth from "./monthView/googleCalendarMonth.tsx";
 import GoogleCalendarWeek from "./weekView/GoogleCalendarWeek.tsx";
 import GoogleCalendarDay from "./dayView/GoogleCalendarDay.tsx";
 import GlobalContext from "./context/GlobalContext.ts";
+import { DefaultView } from './GlobalVar.ts';
 
 // Dashboard panel having view selector. 
-function Panel(props) {
-    const {selectedView, setSelectedView} = useContext(GlobalContext);
+function Top_Panel(props) {
+    const {selectedView, setSelectedView,
+            setSelectedTimeFrames,
+            setSelectedTimeFrame,
+            setDisplayedEmployees
+    } = useContext(GlobalContext);
     const selectRef = useRef(null);
 
 
     useEffect(() => {
         // Set initial state from the select element's default value
         if (selectRef.current) {
-            const defaultView= "WEEK"
-            setSelectedView(defaultView);
-            selectRef.current.value.toUpperCase(defaultView);
+            setSelectedView(DefaultView);
+            selectRef.current.value.toUpperCase();
+            setSelectedTimeFrames([]);
+            setSelectedTimeFrame('');
         }
     }, []);
 
     const handleChange = (event) => {
+
         setSelectedView(event.target.value.toUpperCase());
     };
     return (
@@ -51,4 +58,4 @@ function Panel(props) {
     );
 }
 
-export default Panel;
+export default Top_Panel;

@@ -73,15 +73,15 @@ function Day({day, rowIdx, employeesFilterInfo}) {
                                 setSelectedEmployee(e.employee);
                                 setSelectedEvent(e);
                             }}
-                            key={idx} className={`bg-${employee_colorLabel_by_id[e.employee.id%5]}-500 p-1 sm:mr-3 text-gray-600 text-sm rounded mb-1 truncate flex justify-between items-center ${
+                            key={idx} className={`bg-${employee_colorLabel_by_id[e.employee.id%5]}-100 p-1 sm:mr-3 font-semibold text-gray-600 text-sm rounded mb-1 truncate flex justify-between items-center ${
                                 // event의 employee가 checked면 보여주고 아니면 hidden
                                 employeesFilterInfo.find(em=>{
                                 
                                     return em.id === e.employee.id}).checked ?   '': 'hidden'}`}>
                             <span className='truncate'>{`${e.employee.lastName}, ${e.employee.firstName}`}</span>
-                            <span><img
-                            className='w-6 h-6 rounded-full'
-                            src="https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/09916c28-9bcc-47c4-bc9b-400bb57f3b99.png" alt="" /></span>
+                            <img
+                            className='w-5 h-5 rounded-full'
+                            src={e.employee.profile_pic} alt="" />
                         
                         </div>
                     )

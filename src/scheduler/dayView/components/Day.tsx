@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import GlobalContext from "../../context/GlobalContext.ts";
 import dayjs from "dayjs";
-import {CustomEvent, Employee} from "../../interfaces.ts";
+import { Employee} from "../../interfaces.ts";
 import TimeFrame from "./TimeFrame.tsx";
 import { dividerClasses } from '@mui/material';
 import { employee_colorLabel_by_id } from '../../util.ts';
@@ -12,26 +12,24 @@ interface TimeFrameObject {
     end:number,
     label:string,
     employee: Employee
-    event: CustomEvent | null;
+    event: Event | null;
 }
 
 //example
-interface ObjectClassifiedByEmployees {
-    jim: { // jim, sam, etc...
-        label: string,
+interface TimeFrameClassifiedByEmployeesID {
+    id: { // jim, sam, etc...
         employee: Employee
         list: TimeFrameObject,
-    },
-    sam: { // jim, sam, etc...
-        label: string,
-        list: TimeFrameObject,
-    },
+    }
 }
 
 function Day(props) {
-        const{ daySelected, savedEvents,showEventModal, displayedEmployees} = useContext(GlobalContext);
+        const{ daySelected, savedEvents,showEventModal, 
+            displayedEmployees, setDisplayedEmployees,
+            selectedView,
+            pageIndex} = useContext(GlobalContext);
         const [dayEvents, setDayEvents] = useState([]);
-        const [objectClassifiedByemployees, setObjectClassifiedByemployees] = useState(
+        const [TimeFrameClassifiedByEmployeesID, setTimeFrameClassifiedByEmployeesID] = useState(
 
             null
         ); //최종 형태는 96개의 객체로 이루어져 15분마다 event객체가 있다면 담고있다. 없다면 null
@@ -60,7 +58,7 @@ function Day(props) {
 
         //trigger point
         // 1. dayEvent Changes upon modification on savedEvents or dayChanges
-        // 2. displayedEmployees changes. Update displayed Employees Label & timeframe update(ObjectClassifiedByEmployees)
+        // 2. displayedEmployees changes. Update displayed Employees Label & timeframe update(TimeFrameClassifiedByEmployees)
         useEffect(()=>{
       
         if(displayedEmployees.length>0){
@@ -75,22 +73,23 @@ function Day(props) {
             } )
             console.log("reformedDayEvents", reformedDayEvents);
 
-            // initialTableSet로 각 label별 배열 초기화 {id: {label:'cyan', fullName: 'sam yi', list: [0]}}
+
+    
+           
+
+            // initialTableSet로 각 label별 배열 초기화 {id:{list: [0]}} - id로 찾을 수 있는 map 형태
             const initialTableSet = displayedEmployees.reduce((acc, employee) => {
-                acc[employee.id] = {label: employee.label,
+                acc[employee.id] = {
                     employee: employee
-                    ,fullName:`${employee.firstName} ${employee.lastName}`,list:[]};
+                    ,list:[]};
                 return acc;
+
             }, {}); // 빈 객체를 초기값으로 설정
             console.log("initialTableSet:", initialTableSet);
 
-           //reformedEventsClassifiedByemployees - initialTableSet에서 빈 배열에 TimeFrame들을 채워넣음
-            const reformedEventsClassifiedByemployees = reformedDayEvents.reduce((acc, r)=>{
+           //eventsIncludedtimeFrameClassifiedByEmployees - initialTableSet에서 빈 배열에 TimeFrame 형태로 변환된 이벤트들 채워넣음
+            const TimeFrameClassifiedByEmployeesID_eventOnly = reformedDayEvents.reduce((acc, r)=>{
                 const empId  = r.event.employee.id;
-                console.log("empId", empId);
-                console.log("Object.keys(acc)",Object.keys(acc));
-                console.log("r",r);
-                console.log(Object.keys(acc).includes(String(empId)))
                 if(Object.keys(acc).includes(String(empId))){
                     acc[empId].list.push(r);
                 }
@@ -98,39 +97,38 @@ function Day(props) {
             }, initialTableSet);  // 초기화된 intialAcc부터 시작해서 각 label에 맞는 property에 이벤트들 꽃아줌
 
 
-            console.log("reformedEventsClassifiedByemployees:",reformedEventsClassifiedByemployees);
+            console.log("eventsIncludedtimeFrameClassifiedByEmployees:",TimeFrameClassifiedByEmployeesID_eventOnly);
 
-            //label마다 순회하면서 hoursArray 생성
+            //id 마다 순회하면서 hoursArray 생성
             for(let i =0; i<displayedEmployees.length; i++){
                 // generate hoursArr of corresponding label and change the classifiedByemployees to hours Array
-                console.log("classifiedByemployees[displayedEmployees[i].id]",reformedEventsClassifiedByemployees[displayedEmployees[i].id]);
-                initialTableSet[displayedEmployees[i].id].list = generateHoursArray( reformedEventsClassifiedByemployees[displayedEmployees[i].id].list,displayedEmployees[i]);
+                initialTableSet[displayedEmployees[i].id].list = generateHoursArray( TimeFrameClassifiedByEmployeesID_eventOnly[displayedEmployees[i].id].list,displayedEmployees[i]);
             }
-            
-            console.log("classifiedByemployees after reformation to hoursArray:", reformedEventsClassifiedByemployees);
-            setObjectClassifiedByemployees(reformedEventsClassifiedByemployees);
+
+            setTimeFrameClassifiedByEmployeesID(TimeFrameClassifiedByEmployeesID_eventOnly);
         }
-        }, [dayEvents,displayedEmployees]);
+        }, [dayEvents,displayedEmployees, selectedView]); // selectedView가 바뀔때도 초기화해줘서 dummyEmployee 제대로 생성하게
 
 
+        
 
-        // change the array only with events to hoursArray contains non-assigned timeframe (eventArray -> hoursArray containing events, non assigned timeSlots)
+
+        // 
         // Total 96 tiemSlots including events, non-assigned timeSlots
-        const generateHoursArray  = (eventsByLabel, employee)=>{
+        const generateHoursArray  = (eventsById, employee)=>{
             let resultArray = [];
             let lastEnd = 0;
-            console.log("eventsByLabel", eventsByLabel);
-            for(let i = 0; i<eventsByLabel.length; i++){
+            for(let i = 0; i<eventsById.length; i++){
                 //Getting Employee's event start, end time
-                const {start, end} = eventsByLabel[i];
+                const {start, end} = eventsById[i]; // 16, 20
 
                 // lastEnd 전까지 빈칸 채우기
-                for(let j= lastEnd; j< start; j++){
+                for(let j= lastEnd; j<start; j++){
                     resultArray.push({start: j, end: j+1, event: null, employee: employee})
                 }
                 //event 시간 채우기
                 for(let k=start; k<end; k++){
-                    resultArray.push({start: k, end: k+1, event: eventsByLabel[i].event, initEvent: k=== start, employee: employee});
+                    resultArray.push({start: k, end: k+1, event: eventsById[i].event, initEvent: k=== start, employee: employee});
                 }
 
                 lastEnd = end;
@@ -158,19 +156,29 @@ function Day(props) {
         
         {/* 맨 위 employees */}
         {
-            objectClassifiedByemployees && (
+            TimeFrameClassifiedByEmployeesID && (
 
-                <div className="grid grid-cols-1/10 box-border border-r-[17px] h-[10vh]">
+                <div className="grid grid-cols-1/10 box-border border-r-[17px] h-[10vh] overflow-hidden">
                     <div className="text-center border border-l-transparent">Time</div>
-                    <div className={`grid grid-cols-${Object.keys(objectClassifiedByemployees).length} box-border text-center`}>
-                        {Object.keys(objectClassifiedByemployees).map((id,i)=>{
+                    <div className={`grid grid-cols-${Object.keys(TimeFrameClassifiedByEmployeesID).length} box-border text-center`}>
+                        {Object.keys(TimeFrameClassifiedByEmployeesID).map((id,i)=>{
                             return ( 
-                            <div key={i} className={`bg-${employee_colorLabel_by_id[objectClassifiedByemployees[id].employee.id%5]}-500 text-gray-100 border-b flex justify-center py-3 items-center`}>
-                            <span ><img className='w-10 h-10 rounded-full mr-3' src={"https://sammyoopublicbucket.s3.us-west-2.amazonaws.com/09916c28-9bcc-47c4-bc9b-400bb57f3b99.png"} alt="" /></span>
+                            <div key={i} className={`bg-${parseInt(id)>0? employee_colorLabel_by_id[TimeFrameClassifiedByEmployeesID[id].employee.id%5] : 'gray'}-100 text-gray-100 border-b flex justify-center py-3 items-center`}>
+                           {parseInt(id)>0  ?
+                           <>
+                           <span ><img className='w-10 h-10 rounded-full mr-3' src={TimeFrameClassifiedByEmployeesID[id].employee.profile_pic} alt="" /></span>
                                 <div className='flex flex-col'>
-                                <span>{objectClassifiedByemployees[id].fullName}</span>
-                                <span className='text-gray-300'>{objectClassifiedByemployees[id].employee.job}</span>
+                                <span className='font-bold text-black truncate'>{`${TimeFrameClassifiedByEmployeesID[id].employee.firstName} ${TimeFrameClassifiedByEmployeesID[id].employee.lastName}`}</span>
+                                <span className='text-gray-500'>{TimeFrameClassifiedByEmployeesID[id].employee.job}</span>
                                 </div>
+                           </>
+                           :(
+                                 <div className='flex flex-col'>
+                                 <span className='font-bold text-black truncate'>Non-Assigned</span>
+                                 <span className='text-gray-500'>Non-Assigned</span>
+                                 </div>
+                           )
+                           }
                             </div>
                             
                         )
@@ -200,14 +208,14 @@ function Day(props) {
 {/* Actual Schedule */}
 </div>
 {
-    objectClassifiedByemployees &&
-    <div className={`h-screen grid grid-cols-${Object.keys(objectClassifiedByemployees).length} box-border`}>
-        {objectClassifiedByemployees && Object.keys(objectClassifiedByemployees).map((id, j)=>{
+    TimeFrameClassifiedByEmployeesID &&
+    <div className={`h-screen grid grid-cols-${Object.keys(TimeFrameClassifiedByEmployeesID).length} box-border`}>
+        {TimeFrameClassifiedByEmployeesID && Object.keys(TimeFrameClassifiedByEmployeesID).map((id, j)=>{
             return (<div key={j} className={`grid grid-cols-1 grid-rows-96 box-border`}>
                 {
-                    objectClassifiedByemployees[id].list.map((h, i)=>{
-                        const colorName = h.event? `bg-${employee_colorLabel_by_id[h.event.employee.id]}-500`: '';
-                        return (<TimeFrame  key={i} employee={h.employee} event={h.event} idx={i} colorName={colorName} initEvent={h.initEvent}/>)
+                    TimeFrameClassifiedByEmployeesID[id].list.map((h, i)=>{
+                        const colorClass = h.event? `bg-${employee_colorLabel_by_id[h.event.employee.id%5]}-100`: '';
+                        return (<TimeFrame  key={i} employee={h.employee} event={h.event} idx={i} colorClass={colorClass} initEvent={h.initEvent}/>)
                     })
                 }
             </div>)
@@ -220,7 +228,14 @@ function Day(props) {
 
 
         </div>
-    
+        <div className='px-8 py-4  bg-white rounded-lg shadow-md border border-gray-200'>
+                  <h3 className='text-lg font-semibold mb-2 text-gray-800'>Pro Tips!</h3>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                        <li>Vertical Dragging enables you to select multiple Employees to generate schedules</li>
+                        <li>Utilize Employee Display Control to navigate to the specific employees</li>
+                        <li>Employee Search functionality will be updated shortly</li>
+                  </ul>
+                </div>
         </div>
     );
 

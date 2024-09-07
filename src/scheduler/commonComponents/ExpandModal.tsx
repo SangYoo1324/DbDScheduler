@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import GlobalContext from "../context/GlobalContext.ts";
 import {Close} from "@mui/icons-material";
+import { employee_colorLabel_by_id } from '../util.ts';
 
 function ExpandModal({events}) {
 
@@ -25,7 +26,7 @@ function ExpandModal({events}) {
                 console.log("eventLog", e);
                 return (<div key={i}
                              onClick={(event)=>handleEventClick(event,e)}
-                             className={`bg-${e.employee.label}-500 border border-gray-400 rounded px-3 text-gray-700 cursor-pointer truncate mb-1`}>
+                             className={`bg-${employee_colorLabel_by_id[e.employee.id%5]}-100 border border-gray-400 rounded px-3 text-gray-700 cursor-pointer truncate mb-1`}>
                         {e.employee.firstName} - {e.title}
                 </div>)
             })}

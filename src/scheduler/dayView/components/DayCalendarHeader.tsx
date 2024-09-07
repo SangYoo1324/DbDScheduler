@@ -4,21 +4,24 @@ import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import dayjs from "dayjs";
 import GlobalContext from "../../context/GlobalContext.ts";
 import EmployeePagination from "../../commonComponents/EmployeePagination.tsx";
+import { findNthOfTheWeek } from '../../util.ts';
 function DayCalendarHeader(props) {
 
-    const {daySelected, setDaySelected } = useContext(GlobalContext);
+    const {daySelected, setDaySelected, setWeekIndex, monthIndex} = useContext(GlobalContext);
 
     const handlePrevDay = ()=>{
         setDaySelected(daySelected.subtract(1, 'day'));
+        setWeekIndex(findNthOfTheWeek(daySelected.subtract(1, 'day')));
     }
 
     const handleNextDay = () =>{
         setDaySelected(daySelected.add(1,'day'));
-
+        setWeekIndex(findNthOfTheWeek(daySelected.add(1,'day')));
     }
 
     const handleReset = ()=>{
         setDaySelected(dayjs());
+        setWeekIndex(findNthOfTheWeek(dayjs()));
     }
 
 

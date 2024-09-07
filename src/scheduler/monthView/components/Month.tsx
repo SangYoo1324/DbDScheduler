@@ -34,6 +34,14 @@ function Month({}) {
             ))}
         </div>
 
+        <div className='px-8 py-4  bg-white rounded-lg shadow-md border border-gray-200'>
+                  <h3 className='text-lg font-semibold mb-2 text-gray-800'>Pro Tips!</h3>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-600">
+                        <li>Vertical Dragging enables you to select multiple Employees to generate schedules</li>
+                        <li>Utilize Employee Display Control to navigate to the specific employees</li>
+                        <li>Employee Search functionality will be updated shortly</li>
+                  </ul>
+                </div>
         </div>
         
     );

@@ -8,10 +8,10 @@ import Search from "./Search.tsx";
 function SideBar() {
     const {selectedView} = useContext(GlobalContext);
     return (
-        <aside className="border p-5 w-64 h-screen sm:block hidden">
+        <aside className="border p-5 w-64 h-auto sm:block hidden">
             <CreateEventButton/>
             <SmallCalendar/>
-            {selectedView === "DAY"&& <div className=""><EmployeePagination/></div>}
+            {(selectedView === "DAY" || selectedView=== "WEEK") && <div className=""><EmployeePagination/></div>}
             {/*{selectedView === "MONTH" || selectedView=== "WEEK"}*/}
             {selectedView === "MONTH" &&<div className="mt-8"> <Search/></div>}
         </aside>

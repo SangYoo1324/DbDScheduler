@@ -1,14 +1,23 @@
 import React, {useContext, useEffect, useState} from 'react';
 import dayjs, { Dayjs } from "dayjs";
-import {getMonthMatrix} from "../../util.ts";
+import {findNthOfTheWeek, findWeekIdxOfPPMonthMatrix, getMonthMatrix, getPPMonthMatrix, getRelativeMonthIndex} from "../../util.ts";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import GlobalContext from "../../context/GlobalContext.ts";
+import { get } from 'react-hook-form';
+import { payPeriod } from '../../GlobalVar.ts';
 
 function SmallCalendar() {
 
-    const {monthIndex, setMonthIndex, setSmallCalendarMonth,setDaySelected, daySelected, selectedWeekMatrix} = useContext(GlobalContext);
+    const {monthIndex, setMonthIndex, setSmallCalendarMonth,setDaySelected,
+         selectedView,
+         daySelected,
+         selectedWeekMatrix,
+         setSelectedWeekMatrix,
+         setWeekIndex,
+         setIsSmallCalendarClicked,
+        PPweekIndex} = useContext(GlobalContext);
 
-    const [currentMonthIdx, setCurrentMonthIdx]=  useState(dayjs().month());
+    const [currentRelMonthIdx, setCurrentMonthIdx]=  useState(dayjs().month()); // relativeMonthIdx
     const [currentMonthMatrix, setCurrentMonthMatrix] = useState(getMonthMatrix());
 
 
@@ -25,6 +34,10 @@ function SmallCalendar() {
     useEffect(()=>{
        setCurrentMonthIdx(monthIndex);
        setCurrentMonthMatrix(getMonthMatrix(monthIndex));
+        console.log("WeekIndex:", PPweekIndex);
+        
+        
+
     },[monthIndex]);
 
 
@@ -43,14 +56,14 @@ function SmallCalendar() {
     }
 
     const isSelectedWeek = (targetDay:Dayjs)=>{
-
+        // console.log("체쿠: targetDay:", targetDay.format("DD-MM-YY"));
+        // console.log("체쿠: selectedWeekMatrix:", selectedWeekMatrix);
        const same =  selectedWeekMatrix?.some((day)=> {
-      
+                    // dayjs object comparison
         return    day.isSame(targetDay, 'day');
       }
     )  
    
-    console.log(same);
     return same;
     }
 
@@ -59,7 +72,7 @@ function SmallCalendar() {
             <header className="flex justify-between">
 
                 <p className="text-gray-500 font-bold">
-                    {dayjs(new Date(dayjs().year(), currentMonthIdx))
+                    {dayjs(new Date(dayjs().year(), currentRelMonthIdx))
                         .format("MMMM YYYY")}
                 </p>
                 <div>
@@ -92,9 +105,10 @@ function SmallCalendar() {
                             {row.map((day:any,idx:number)=>(
                                     <button
                                         onClick={()=>{
-                                            console.log("moving with smallCalendar click",currentMonthIdx)
-                                            setSmallCalendarMonth(currentMonthIdx)
-                                            setDaySelected(day);
+                                            setDaySelected(day);  
+                                            setIsSmallCalendarClicked(true);                                             
+                                            // monthIndex가 현재 날짜 기준이므로, 현재 날짜와 선택된 날짜의 차이를 구해서 payPeriod를 찾아야함(다음 연도로 넘어가버리면 monthIndex가 달라져버려서)
+                                            //setWeekIndex(findWeekIdxOfPPMonthMatrix(getPPMonthMatrix(getRelativeMonthIndex(day), payPeriod), day));
                                         }}
                                         key={idx} className={`py-1 w-full flex items-center justify-center ${isSelectedWeek(day) ? 'bg-yellow-100' : ''}`}>
                                         <span className={`text-sm ${getDayClass(day)} flex-1 text-center` }>{day.format('D')}</span>
